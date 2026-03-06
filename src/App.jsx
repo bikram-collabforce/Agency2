@@ -1,10 +1,44 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+const API_BASE = import.meta.env.VITE_API_URL ?? ''
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  const fetchCount = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/count`)
+      if (!res.ok) throw new Error('Failed to fetch count')
+      const data = await res.json()
+      setCount(data.count)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchCount()
+  }, [])
+
+  const increment = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/count/increment`, {
+        method: 'POST',
+      })
+      if (!res.ok) throw new Error('Failed to increment')
+      const data = await res.json()
+      setCount(data.count)
+    } catch (e) {
+      setError(e.message)
+    }
+  }
 
   return (
     <>
@@ -18,9 +52,13 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+        {loading && <p>Loading…</p>}
+        {error && <p className="error">{error}</p>}
+        {!loading && !error && (
+          <button onClick={increment}>
+            count is {count}
+          </button>
+        )}
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
         </p>
