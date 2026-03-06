@@ -1,0 +1,11 @@
+# Frontend only — builds and serves the React app with Caddy.
+# Set VITE_API_URL when building if the API is on another host (e.g. Railway backend URL).
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080

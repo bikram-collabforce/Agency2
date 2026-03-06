@@ -1,0 +1,16 @@
+# Database only — deploy or run PostgreSQL by itself.
+# Backend must be given DATABASE_URL pointing at this (or your managed Postgres).
+services:
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: appdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
